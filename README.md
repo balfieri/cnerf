@@ -7,10 +7,4 @@ I am using my own GNU-style Makefile for now, one that is familiar to me.
 
 We can worry later about trying to put this back into instant-ngp.
 
-These parallel repos must exist:
-
-../instant-ngp
-../tiny-cuda-nn
-../tinylogger
-../eigen 
-../imgui
+See the IDIRS at the top of Makefile for parallel repos that must exist to get this to build.

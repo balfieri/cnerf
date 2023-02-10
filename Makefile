@@ -1,6 +1,7 @@
 IDIRS=../instant-ngp/include \
       ../instant-ngp/dependencies/filesystem \
       ../tiny-cuda-nn/include \
+      ../tiny-cuda-nn/dependencies \
       ../tinylogger \
       ../eigen \
 

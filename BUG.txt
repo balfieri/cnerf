@@ -1,0 +1,4 @@
+stub out cuda_runtime.h and cuda.h
+we want to keep tiny-cuda-nn - it has few kernel launches, it seems - we can turn those into macros that do real kernel launch or CPU launch
+need a LAUNCH_KERNEL macro.
+__global__ needs to be a null ifdef
