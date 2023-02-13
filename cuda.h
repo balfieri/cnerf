@@ -5,6 +5,9 @@
 
 #include <stdlib.h>
 
+#define __device__
+#define __global__
+
 using cudaError_t = uint32_t;
 const cudaError_t cudaSuccess = 0;
 const cudaError_t cudaErrorNotYetImplemented = 31;
@@ -44,9 +47,54 @@ const cudaMemcpyKind cudaMemcpyDeviceToHost   = 2;
 const cudaMemcpyKind cudaMemcpyDeviceToDevice = 3;
 const cudaMemcpyKind cudaMemcpyDefault        = 4;
 
-using CUdeviceptr = void *;
+using CUdeviceptr = uint8_t *;
 using CUresult = uint32_t;
 const CUresult CUDA_SUCCESS = 0;
+const CUresult CUDA_ERROR_NOT_SUPPORTED = 801;
+using CUmemGenericAllocationHandle = void *;
+
+using CUmemLocationType = uint32_t;
+const CUmemLocationType CU_MEM_LOCATION_TYPE_INVALID = 0;
+const CUmemLocationType CU_MEM_LOCATION_TYPE_DEVICE = 1;
+
+struct CUmemLocation
+{
+    int                         id;
+    CUmemLocationType           type;
+};
+
+using CUmemAllocationHandleType = uint32_t;
+const CUmemAllocationHandleType CU_MEM_HANDLE_TYPE_NONE = 0x0;
+const CUmemAllocationHandleType CU_MEM_HANDLE_TYPE_POSIX_FILE_DESCRIPTOR = 0x1;
+const CUmemAllocationHandleType CU_MEM_HANDLE_TYPE_WIN32 = 0x2;
+const CUmemAllocationHandleType CU_MEM_HANDLE_TYPE_WIN32_KMT = 0x4;
+
+using CUmemAllocationType = uint32_t;
+const CUmemAllocationType CU_MEM_ALLOCATION_TYPE_INVALID = 0x0;
+const CUmemAllocationType CU_MEM_ALLOCATION_TYPE_PINNED = 0x1;
+
+class CUmemAllocationProp
+{
+public:
+    unsigned char               compressionType;
+    struct CUmemLocation        location;
+    CUmemAllocationHandleType 	requestedHandleTypes;
+    CUmemAllocationType         type;
+    unsigned short              usage;
+    void *                      win32HandleMetaData;
+};
+
+using CUmemAccess_flags = uint32_t;
+const CUmemAccess_flags CU_MEM_ACCESS_FLAGS_PROT_NONE = 0x0;
+const CUmemAccess_flags CU_MEM_ACCESS_FLAGS_PROT_READ = 0x1;
+const CUmemAccess_flags CU_MEM_ACCESS_FLAGS_PROT_READWRITE = 0x3;
+
+class CUmemAccessDesc
+{
+public:
+    CUmemAccess_flags           flags;
+    struct CUmemLocation        location;
+};
 
 static const char * cudaGetErrorString(cudaError_t error)
 {
@@ -123,25 +171,16 @@ static cudaError_t cudaGraphExecDestroy(cudaGraphExec_t exec)
     return cudaErrorNotYetImplemented;
 }
 
-static cudaError_t cudaMalloc(void** devPtr, size_t size)
-{
-    *devPtr = malloc(size);
-    return cudaSuccess;
-}
-
 static cudaError_t cudaMalloc(uint8_t** devPtr, size_t size)
 {
-    return cudaMalloc((void **)devPtr, size);
-}
-
-static cudaError_t cudaMallocManaged(void** devPtr, size_t size, unsigned int flags=cudaMemAttachGlobal)
-{
-    return cudaMalloc(devPtr, size);
+    *devPtr = (uint8_t*)malloc(size);
+    return cudaSuccess;
 }
 
 static cudaError_t cudaMallocManaged(uint8_t** devPtr, size_t size, unsigned int flags=cudaMemAttachGlobal)
 {
-    return cudaMallocManaged((void **)devPtr, size, flags);
+    (void)flags;
+    return cudaMalloc(devPtr, size);
 }
 
 static cudaError_t cudaFree(void* devPtr)
@@ -155,6 +194,72 @@ static cudaError_t cudaMemCpy(void* dst, void* src, size_t count, cudaMemcpyKind
     (void)kind;
     memcpy(dst, src, count);
     return cudaSuccess;
+}
+
+
+static CUresult cuGetErrorName(CUresult result, const char ** pStr)
+{
+    (void)result;
+    *pStr = "unknown";
+    return CUDA_SUCCESS;
+}
+
+static CUresult cuMemAddressReserve(CUdeviceptr* ptr, size_t size, size_t alignment, CUdeviceptr addr, unsigned long long flags)
+{
+    (void)ptr;
+    (void)size;
+    (void)alignment;
+    (void)addr;
+    (void)flags;
+    return CUDA_ERROR_NOT_SUPPORTED;            // use mmap() if needed
+}
+
+static CUresult cuMemCreate(CUmemGenericAllocationHandle* handle, size_t size, const CUmemAllocationProp* prop, unsigned long long flags)
+{
+    (void)handle;
+    (void)size;
+    (void)prop;
+    (void)flags;
+    return CUDA_ERROR_NOT_SUPPORTED;            // use mmap() if needed
+}
+
+static CUresult cuMemMap (CUdeviceptr ptr, size_t size, size_t offset, CUmemGenericAllocationHandle handle, unsigned long long flags)
+{
+    (void)ptr;
+    (void)size;
+    (void)offset;
+    (void)handle;
+    (void)flags;
+    return CUDA_ERROR_NOT_SUPPORTED;            // use mmap() if needed
+}
+
+static CUresult cuMemAddressFree(CUdeviceptr ptr, size_t size)
+{
+    (void)ptr;
+    (void)size;
+    return CUDA_ERROR_NOT_SUPPORTED;            // use munmap() if needed
+}
+
+static CUresult cuMemSetAccess( CUdeviceptr ptr, size_t size, const CUmemAccessDesc* desc, size_t count)
+{
+    (void)ptr;
+    (void)size;
+    (void)desc;
+    (void)count;
+    return CUDA_ERROR_NOT_SUPPORTED;           
+}
+
+static CUresult cuMemUnmap(CUdeviceptr ptr, size_t size)
+{
+    (void)ptr;
+    (void)size;
+    return CUDA_ERROR_NOT_SUPPORTED;            // use munmap() if needed
+}
+
+static CUresult cuMemRelease(CUmemGenericAllocationHandle handle)
+{
+    free(handle);
+    return CUDA_SUCCESS;
 }
 
 #endif
