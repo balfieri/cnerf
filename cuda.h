@@ -5,8 +5,56 @@
 
 #include <stdlib.h>
 
+#include <cmath>
+#include <fstream>
+
+#define __host__
 #define __device__
 #define __global__
+
+class CuDim3
+{
+public:
+    int	x;    
+    int	y;    
+    int	z;    
+};
+
+static CuDim3 threadIdx;
+static CuDim3 blockIdx;
+static CuDim3 blockDim;
+static CuDim3 gridDim;
+
+class float2
+{
+public:
+    float x;
+    float y;
+};
+
+class float3
+{
+public:
+    float x;
+    float y;
+    float z;
+};
+
+class float4
+{
+public:
+    float x;
+    float y;
+    float z;
+    float w;
+};
+
+class __half2
+{
+public:
+    __half x;
+    __half y;
+};
 
 using cudaError_t = uint32_t;
 const cudaError_t cudaSuccess = 0;
@@ -260,6 +308,26 @@ static CUresult cuMemRelease(CUmemGenericAllocationHandle handle)
 {
     free(handle);
     return CUDA_SUCCESS;
+}
+
+static float normcdff(float a)
+{
+    (void)a;
+    std::cout << "ERROR: normcdff() not yet implemented\n";
+    exit(1);
+    return 0.0;
+}
+
+static float rsqrtf(float a)
+{
+    (void)a;
+    return powf(a, -0.5);	// CUDA manual hints that this is how it could be implemented
+}
+
+static void sincosf(float a, float* s, float* c)
+{
+    *s = sinf(a);
+    *c = cosf(a);
 }
 
 #endif
