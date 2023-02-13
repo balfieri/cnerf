@@ -1,4 +1,5 @@
-IDIRS=../instant-ngp/include \
+IDIRS=. \
+      ../instant-ngp/include \
       ../instant-ngp/dependencies/filesystem \
       ../tiny-cuda-nn/include \
       ../tiny-cuda-nn/dependencies \
@@ -7,7 +8,7 @@ IDIRS=../instant-ngp/include \
 
 INCLUDES=$(patsubst %,-I%, $(IDIRS))
 LIBS=-lz -lpthread 
-FLAGS=-std=c++17 -O3 -Werror -Wextra -Wstrict-aliasing -pedantic -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wmissing-include-dirs  -Woverloaded-virtual -Wredundant-decls -Wsign-promo -Wstrict-overflow=5 -Wswitch-default -Wundef -g $(INCLUDES) $(LIBS)
+FLAGS=-std=c++17 -O3 -Werror -Wextra -Wstrict-aliasing -pedantic -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wmissing-include-dirs  -Woverloaded-virtual -Wredundant-decls -Wsign-promo -Wstrict-overflow=5 -Wswitch-default -Wundef -g -DTCNN_MIN_GPU_ARCH=90 $(INCLUDES) $(LIBS)
 
 OS=$(shell uname)
 ifeq ($(OS), Darwin)
