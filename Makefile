@@ -17,7 +17,7 @@ OS=$(shell uname)
 ifeq ($(OS), Darwin)
 CC=clang
 GPP=g++
-FLAGS+=-Wno-shift-count-overflow -D__half=_Float16 -Wno-unused-parameter -Wno-cast-qual -Wno-return-type -Wno-sign-compare -Wno-deprecated-copy
+FLAGS+=-Wno-shift-count-overflow -D__half=_Float16 -Wno-unused-parameter -Wno-cast-qual -Wno-return-type -Wno-sign-compare -Wno-deprecated-copy -Wno-switch
 else
 ifeq ($(OS), Linux)
 FLAGS+=-Wno-empty-body -Wno-strict-overflow -Wno-switch-default -Wno-shift-negative-value -Wno-maybe-uninitialized -Wno-sign-promo -Wno-overloaded-virtual -Wshift-count-overflow -DNO_FMT_LL 

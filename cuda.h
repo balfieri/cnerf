@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <fstream>
+#include <iostream>
 
 #define __host__
 #define __device__
@@ -545,17 +546,97 @@ static void sincosf(float a, float* s, float* c)
     *c = cosf(a);
 }
 
+static float __expf(float a)
+{
+    return expf(a);
+}
+
+inline float __uint_as_float( unsigned int u ) 
+{ 
+    float f; 
+    memcpy( &f, &u, sizeof(f) ); 
+    return f; 
+}
+
+inline unsigned int __float_as_uint( float f )
+{ 
+    unsigned int u; 
+    memcpy( &u, &f, sizeof(u) );
+    return u; 
+}
+
+static float __frcp_rn(float a)
+{
+    // TODO: needs to be round-to-even
+    return 1.0f/a;
+}
+
+static float __saturatef(float a)
+{
+    if (a < 0.0f) return 0.0f;
+    if (a > 1.0f) return 1.0f;
+    return a;
+}
+
+static int min(int a, int b)
+{
+    return (a <= b) ? a : b;
+}
+
+static int max(int a, int b)
+{
+    return (a >= b) ? a : b;
+}
+
+static uint32_t umin(uint32_t a, uint32_t b)
+{
+    return (a <= b) ? a : b;
+}
+
+static uint32_t umax(uint32_t a, uint32_t b)
+{
+    return (a >= b) ? a : b;
+}
+
 static int atomicAdd(int *ptr, int val)
 {
     int r = *ptr;
-    *ptr = val;
+    *ptr += val;
+    return r;
+}
+
+static uint32_t atomicAdd(uint32_t *ptr, uint32_t val)
+{
+    uint32_t r = *ptr;
+    *ptr += val;
     return r;
 }
 
 static float atomicAdd(float *ptr, float val)
 {
     float r = *ptr;
-    *ptr = val;
+    *ptr += val;
+    return r;
+}
+
+static int atomicMax(int *ptr, int val)
+{
+    int r = *ptr;
+    *ptr = (r >= val) ? r : val;
+    return r;
+}
+
+static uint32_t atomicMax(uint32_t *ptr, uint32_t val)
+{
+    uint32_t r = *ptr;
+    *ptr = (r >= val) ? r : val;
+    return r;
+}
+
+static float atomicMax(float *ptr, float val)
+{
+    float r = *ptr;
+    *ptr = (r >= val) ? r : val;
     return r;
 }
 
