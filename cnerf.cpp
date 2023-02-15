@@ -4,3 +4,4 @@
 //
 
 #include "../instant-ngp/src/main.cu"
+#include "../instant-ngp/src/testbed.cu"

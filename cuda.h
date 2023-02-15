@@ -11,43 +11,45 @@
 #define __host__
 #define __device__
 #define __global__
+#define __shared__
 
 class dim3
 {
 public:
-    int	x;    
-    int	y;    
-    int	z;    
+    uint32_t	x;    
+    uint32_t	y;    
+    uint32_t	z;    
 
     inline dim3() {}
-    inline dim3(int x, int y, int z) : x(x), y(y), z(z) {}
+    inline dim3(uint32_t x, uint32_t y, uint32_t z) : x(x), y(y), z(z) {}
 };
 
 static dim3 threadIdx;
 static dim3 blockIdx;
 static dim3 blockDim;
 static dim3 gridDim;
+#define warpSize 32
 
 #define LAUNCH_KERNEL3(kernel, gridDim3, blockDim3, shmem_size, stream, args)\
 {\
     gridDim  = gridDim3;\
     blockDim = blockDim3;\
-    for(int z = 0; z < gridDim.z; z++)\
+    for(uint32_t z = 0; z < gridDim.z; z++)\
     {\
         blockIdx.z = z;\
-        for(int y = 0; y < gridDim.y; y++)\
+        for(uint32_t y = 0; y < gridDim.y; y++)\
         {\
             blockIdx.y = y;\
-            for(int x = 0; x < gridDim.x; x++)\
+            for(uint32_t x = 0; x < gridDim.x; x++)\
             {\
                 blockIdx.x = x;\
-                for(int z = 0; z < blockDim.z; z++)\
+                for(uint32_t z = 0; z < blockDim.z; z++)\
                 {\
                     threadIdx.z = z;\
-                    for(int y = 0; y < blockDim.y; y++)\
+                    for(uint32_t y = 0; y < blockDim.y; y++)\
                     {\
                         threadIdx.y = y;\
-                        for(int x = 0; x < blockDim.x; x++)\
+                        for(uint32_t x = 0; x < blockDim.x; x++)\
                         {\
                             threadIdx.x = x;\
                             kernel args;\
@@ -58,6 +60,10 @@ static dim3 gridDim;
         }\
     }\
 }\
+
+static inline void __syncthreads(void) 
+{
+}
 
 class float2
 {
@@ -83,11 +89,46 @@ public:
     float w;
 };
 
+class double2
+{
+public:
+    double x;
+    double y;
+};
+
+class double3
+{
+public:
+    double x;
+    double y;
+    double z;
+};
+
+class double4
+{
+public:
+    double x;
+    double y;
+    double z;
+    double w;
+};
+
+using half = __half;
+
 class __half2
 {
 public:
     __half x;
     __half y;
+};
+
+class int4
+{
+public:
+    int x;
+    int y;
+    int z;
+    int w;
 };
 
 using cudaError_t = uint32_t;
@@ -216,6 +257,12 @@ static cudaError_t cudaStreamDestroy(cudaStream_t stream)
     return cudaErrorNotYetImplemented;
 }
 
+static cudaError_t cudaStreamSynchronize(cudaStream_t stream)
+{
+    (void)stream;
+    return cudaSuccess;
+}
+
 static cudaError_t cudaStreamIsCapturing(cudaStream_t stream, cudaStreamCaptureStatus* pCaptureStatus)
 {
     (void)stream;
@@ -293,18 +340,31 @@ static cudaError_t cudaFree(void* devPtr)
     return cudaSuccess;
 }
 
-static cudaError_t cudaMemCpy(void* dst, void* src, size_t count, cudaMemcpyKind kind)
+static cudaError_t cudaMemsetAsync(void* dst, int c, size_t len, cudaStream_t stream)
+{
+    (void)stream;
+    memset(dst, c, len);
+    return cudaSuccess;
+}
+
+static cudaError_t cudaMemCpy(void* dst, const void* src, size_t count, cudaMemcpyKind kind)
 {
     (void)kind;
     memcpy(dst, src, count);
     return cudaSuccess;
 }
 
-static cudaError_t cudaMemcpy(void* dst, void* src, size_t count, cudaMemcpyKind kind)
+static cudaError_t cudaMemcpy(void* dst, const void* src, size_t count, cudaMemcpyKind kind)
 {
     (void)kind;
     memcpy(dst, src, count);
     return cudaSuccess;
+}
+
+static cudaError_t cudaMemcpyAsync(void* dst, const void *src, size_t count, cudaMemcpyKind kind, cudaStream_t stream)
+{
+    (void)stream;
+    return cudaMemcpy(dst, src, count, kind);
 }
 
 static CUresult cuGetErrorName(CUresult result, const char ** pStr)
@@ -399,6 +459,15 @@ static cudaError_t cudaEventRecord(cudaEvent_t event, cudaStream_t stream)
     return cudaErrorNotYetImplemented;
 }
 
+static cudaError_t surf2Dread(float4 * pPixel, cudaSurfaceObject_t surface, uint32_t x, uint32_t y)
+{
+    (void)pPixel;
+    (void)surface;
+    (void)x;
+    (void)y;
+    return cudaErrorNotYetImplemented;
+}
+
 static float normcdff(float a)
 {
     (void)a;
@@ -417,6 +486,20 @@ static void sincosf(float a, float* s, float* c)
 {
     *s = sinf(a);
     *c = cosf(a);
+}
+
+static int atomicAdd(int *ptr, int val)
+{
+    int r = *ptr;
+    *ptr = val;
+    return r;
+}
+
+static float atomicAdd(float *ptr, float val)
+{
+    float r = *ptr;
+    *ptr = val;
+    return r;
 }
 
 #endif
