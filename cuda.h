@@ -18,6 +18,9 @@ public:
     int	x;    
     int	y;    
     int	z;    
+
+    inline dim3() {}
+    inline dim3(int x, int y, int z) : x(x), y(y), z(z) {}
 };
 
 static dim3 threadIdx;
@@ -91,7 +94,8 @@ using cudaError_t = uint32_t;
 const cudaError_t cudaSuccess = 0;
 const cudaError_t cudaErrorNotYetImplemented = 31;
 
-using cudaStream_t = void *;
+struct __cudaStream;
+using cudaStream_t = __cudaStream *;
 const cudaStream_t cudaStreamLegacy = nullptr;
 
 using cudaStreamCaptureMode = uint32_t;
@@ -105,9 +109,12 @@ const cudaStreamCaptureStatus cudaStreamCaptureStatusActive = 1;
 const cudaStreamCaptureStatus cudaStreamCaptureStatusInvalidated = 2;
 const cudaStreamCaptureStatus cudaErrorStreamCaptureImplicit = 3;
 
-using cudaGraph_t = void *;
-using cudaGraphExec_t = void *;
-using cudaGraphNode_t = void *;
+struct __cudaGraph;
+using cudaGraph_t = __cudaGraph *;
+struct __cudaGraphExec;
+using cudaGraphExec_t = __cudaGraphExec *;
+struct __cudaGraphNode;
+using cudaGraphNode_t = __cudaGraphNode *;
 
 using cudaGraphExecUpdateResult = uint32_t;
 const cudaGraphExecUpdateResult cudaGraphExecUpdateSuccess = 0;
@@ -175,6 +182,12 @@ public:
     struct CUmemLocation        location;
 };
 
+typedef unsigned long long cudaSurfaceObject_t;
+struct __cudaArray;
+using cudaArray_t = __cudaArray *;
+struct __cudaEvent;
+using cudaEvent_t = __cudaEvent *;
+
 static const char * cudaGetErrorString(cudaError_t error)
 {
     (void)error;
@@ -189,6 +202,18 @@ static const char * cudaGetErrorString(cudaError_t error)
 static cudaError_t cudaDeviceSynchronize(void)
 {
     return cudaSuccess;
+}
+
+static cudaError_t cudaStreamCreate(cudaStream_t* pStream)
+{
+    (void)pStream;
+    return cudaErrorNotYetImplemented;
+}
+
+static cudaError_t cudaStreamDestroy(cudaStream_t stream)
+{
+    (void)stream;
+    return cudaErrorNotYetImplemented;
 }
 
 static cudaError_t cudaStreamIsCapturing(cudaStream_t stream, cudaStreamCaptureStatus* pCaptureStatus)
@@ -275,6 +300,12 @@ static cudaError_t cudaMemCpy(void* dst, void* src, size_t count, cudaMemcpyKind
     return cudaSuccess;
 }
 
+static cudaError_t cudaMemcpy(void* dst, void* src, size_t count, cudaMemcpyKind kind)
+{
+    (void)kind;
+    memcpy(dst, src, count);
+    return cudaSuccess;
+}
 
 static CUresult cuGetErrorName(CUresult result, const char ** pStr)
 {
@@ -339,6 +370,33 @@ static CUresult cuMemRelease(CUmemGenericAllocationHandle handle)
 {
     free(handle);
     return CUDA_SUCCESS;
+}
+
+static cudaError_t cudaEventCreate(cudaEvent_t* pEvent)
+{
+    (void)pEvent;
+    return cudaErrorNotYetImplemented;
+}
+
+static cudaError_t cudaEventDestroy(cudaEvent_t event)
+{
+    (void)event;
+    return cudaErrorNotYetImplemented;
+}
+
+static cudaError_t cudaStreamWaitEvent(cudaStream_t stream, cudaEvent_t event, unsigned int flags)
+{
+    (void)stream;
+    (void)event;
+    (void)flags;
+    return cudaErrorNotYetImplemented;
+}
+
+static cudaError_t cudaEventRecord(cudaEvent_t event, cudaStream_t stream)
+{
+    (void)event;
+    (void)stream;
+    return cudaErrorNotYetImplemented;
 }
 
 static float normcdff(float a)
