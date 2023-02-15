@@ -89,6 +89,30 @@ public:
     float w;
 };
 
+static inline float2 make_float2(float x, float y)
+{
+    float2 v;
+    v.x = x;
+    v.y = y;
+}
+
+static inline float3 make_float3(float x, float y, float z)
+{
+    float3 v;
+    v.x = x;
+    v.y = y;
+    v.z = z;
+}
+
+static inline float4 make_float4(float x, float y, float z, float w)
+{
+    float4 v;
+    v.x = x;
+    v.y = y;
+    v.z = z;
+    v.w = w;
+}
+
 class double2
 {
 public:
@@ -340,7 +364,14 @@ static cudaError_t cudaFree(void* devPtr)
     return cudaSuccess;
 }
 
-static cudaError_t cudaMemsetAsync(void* dst, int c, size_t len, cudaStream_t stream)
+static cudaError_t cudaMemset(void* dst, int c, size_t len, cudaStream_t stream=0)
+{
+    (void)stream;
+    memset(dst, c, len);
+    return cudaSuccess;
+}
+
+static cudaError_t cudaMemsetAsync(void* dst, int c, size_t len, cudaStream_t stream=0)
 {
     (void)stream;
     memset(dst, c, len);
@@ -361,10 +392,17 @@ static cudaError_t cudaMemcpy(void* dst, const void* src, size_t count, cudaMemc
     return cudaSuccess;
 }
 
-static cudaError_t cudaMemcpyAsync(void* dst, const void *src, size_t count, cudaMemcpyKind kind, cudaStream_t stream)
+static cudaError_t cudaMemcpyAsync(void* dst, const void *src, size_t count, cudaMemcpyKind kind, cudaStream_t stream=0)
 {
     (void)stream;
     return cudaMemcpy(dst, src, count, kind);
+}
+
+static cudaError_t cudaMemcpyPeerAsync(void* dst, int dstDevice, const void* src, int srcDevice, size_t count, cudaStream_t stream=0)
+{
+    (void)dstDevice;
+    (void)srcDevice;
+    return cudaMemcpyAsync(dst, src, count, cudaMemcpyDeviceToDevice, stream);
 }
 
 static CUresult cuGetErrorName(CUresult result, const char ** pStr)
@@ -468,6 +506,25 @@ static cudaError_t surf2Dread(float4 * pPixel, cudaSurfaceObject_t surface, uint
     return cudaErrorNotYetImplemented;
 }
 
+static cudaError_t surf2Dwrite(float4 pixel, cudaSurfaceObject_t surface, uint32_t x, uint32_t y)
+{
+    (void)pixel;
+    (void)surface;
+    (void)x;
+    (void)y;
+    return cudaErrorNotYetImplemented;
+}
+
+static cudaError_t surf2Dwrite(float2 pixel, cudaSurfaceObject_t surface, uint32_t x, uint32_t y)
+{
+    return surf2Dwrite(make_float4(pixel.x, pixel.y, pixel.x, pixel.y), surface, x, y);
+}
+
+static cudaError_t surf2Dwrite(float pixel, cudaSurfaceObject_t surface, uint32_t x, uint32_t y)
+{
+    return surf2Dwrite(make_float4(pixel, pixel, pixel, pixel), surface, x, y);
+}
+
 static float normcdff(float a)
 {
     (void)a;
@@ -500,6 +557,15 @@ static float atomicAdd(float *ptr, float val)
     float r = *ptr;
     *ptr = val;
     return r;
+}
+
+static float __shfl_xor_sync(unsigned mask, const float var, const float delta, const int width=warpSize)
+{
+    (void)mask;
+    (void)var;
+    (void)delta;
+    (void)width;
+    return cudaErrorNotYetImplemented;
 }
 
 #endif
