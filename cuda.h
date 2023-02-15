@@ -12,7 +12,7 @@
 #define __device__
 #define __global__
 
-class CuDim3
+class dim3
 {
 public:
     int	x;    
@@ -20,10 +20,41 @@ public:
     int	z;    
 };
 
-static CuDim3 threadIdx;
-static CuDim3 blockIdx;
-static CuDim3 blockDim;
-static CuDim3 gridDim;
+static dim3 threadIdx;
+static dim3 blockIdx;
+static dim3 blockDim;
+static dim3 gridDim;
+
+#define LAUNCH_KERNEL3(kernel, gridDim3, blockDim3, shmem_size, stream, args)\
+{\
+    gridDim  = gridDim3;\
+    blockDim = blockDim3;\
+    for(int z = 0; z < gridDim.z; z++)\
+    {\
+        blockIdx.z = z;\
+        for(int y = 0; y < gridDim.y; y++)\
+        {\
+            blockIdx.y = y;\
+            for(int x = 0; x < gridDim.x; x++)\
+            {\
+                blockIdx.x = x;\
+                for(int z = 0; z < blockDim.z; z++)\
+                {\
+                    threadIdx.z = z;\
+                    for(int y = 0; y < blockDim.y; y++)\
+                    {\
+                        threadIdx.y = y;\
+                        for(int x = 0; x < blockDim.x; x++)\
+                        {\
+                            threadIdx.x = x;\
+                            kernel args;\
+                        }\
+                    }\
+                }\
+            }\
+        }\
+    }\
+}\
 
 class float2
 {
