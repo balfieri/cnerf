@@ -619,6 +619,14 @@ static float atomicAdd(float *ptr, float val)
     return r;
 }
 
+static __half2 atomicAdd(__half2 *ptr, __half2 val)
+{
+    __half2 r = *ptr;
+    ptr->x += val.x;
+    ptr->y += val.y;
+    return r;
+}
+
 static int atomicMax(int *ptr, int val)
 {
     int r = *ptr;
