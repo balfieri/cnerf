@@ -199,7 +199,18 @@ const cudaMemcpyKind cudaMemcpyDeviceToHost   = 2;
 const cudaMemcpyKind cudaMemcpyDeviceToDevice = 3;
 const cudaMemcpyKind cudaMemcpyDefault        = 4;
 
+using CUdevice = uint32_t;
 using CUdeviceptr = uint8_t *;
+using CUdevice_attribute = uint32_t;
+const CUdevice_attribute CU_DEVICE_ATTRIBUTE_VIRTUAL_ADDRESS_MANAGEMENT_SUPPORTED = 102;
+class cudaDeviceProp 
+{
+public:
+    char                        name[256];
+    int                         major;
+    int                         minor;
+    // many others not used
+};
 using CUresult = uint32_t;
 const CUresult CUDA_SUCCESS = 0;
 const CUresult CUDA_ERROR_NOT_SUPPORTED = 801;
@@ -247,6 +258,10 @@ public:
     CUmemAccess_flags           flags;
     struct CUmemLocation        location;
 };
+
+using CUmemAllocationGranularity_flags = uint32_t;
+const CUmemAllocationGranularity_flags CU_MEM_ALLOC_GRANULARITY_MINIMUM = 0x0;
+const CUmemAllocationGranularity_flags CU_MEM_ALLOC_GRANULARITY_RECOMMENDED = 0x1;
 
 typedef unsigned long long cudaSurfaceObject_t;
 struct __cudaArray;
@@ -301,9 +316,45 @@ static const char * cudaGetErrorString(cudaError_t error)
     }
 }
 
+static int __curr_device = 0;
+
+static cudaError_t cudaGetDeviceCount(int* pCount)
+{
+    *pCount = 1;
+    return cudaSuccess;
+}
+
+static cudaError_t cudaSetDevice(int device)
+{
+    __curr_device = device;
+    return cudaSuccess;
+}
+
+static cudaError_t cudaGetDevice(int* pDevice)
+{
+    *pDevice = __curr_device;
+    return cudaSuccess;
+}
+
 static cudaError_t cudaDeviceSynchronize(void)
 {
     return cudaSuccess;
+}
+
+static cudaError_t cudaGetDeviceProperties(cudaDeviceProp* pProp, int device)
+{
+    sprintf(pProp->name, "emulated_cuda%d", device);
+    pProp->major = 1;
+    pProp->minor = 0;
+    return cudaSuccess;
+}
+
+static cudaError_t cuDeviceGetAttribute(int* pi, CUdevice_attribute attrib, CUdevice dev)
+{
+    (void)pi;
+    (void)attrib;
+    (void)dev;
+    return cudaErrorNotYetImplemented;
 }
 
 static cudaError_t cudaStreamCreate(cudaStream_t* pStream)
@@ -409,6 +460,13 @@ static cudaChannelFormatDesc cudaCreateChannelDesc(void)
     return desc;
 }
 
+static cudaError_t cudaMemGetInfo(size_t* pFree, size_t* pTotal)
+{
+    (void)pFree;
+    (void)pTotal;
+    return cudaErrorNotYetImplemented;
+}
+
 static cudaError_t cudaMalloc(uint8_t** devPtr, size_t size)
 {
     *devPtr = (uint8_t*)malloc(size);
@@ -483,6 +541,14 @@ static CUresult cuGetErrorName(CUresult result, const char ** pStr)
     (void)result;
     *pStr = "unknown";
     return CUDA_SUCCESS;
+}
+
+static CUresult cuMemGetAllocationGranularity (size_t* granularity, const CUmemAllocationProp* prop, CUmemAllocationGranularity_flags option)
+{
+    (void)granularity;
+    (void)prop;
+    (void)option;
+    return CUDA_ERROR_NOT_SUPPORTED;            
 }
 
 static CUresult cuMemAddressReserve(CUdeviceptr* ptr, size_t size, size_t alignment, CUdeviceptr addr, unsigned long long flags)

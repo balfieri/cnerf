@@ -3,6 +3,13 @@
 // Initially, this will do only rendering (forward pass through neural net).
 //
 
+#include "../tiny-cuda-nn/src/common.cu"
+#include "../tiny-cuda-nn/src/common_device.cu"
+#include "../tiny-cuda-nn/src/fully_fused_mlp.cu"
+#include "../tiny-cuda-nn/src/loss.cu"
+#include "../tiny-cuda-nn/src/network.cu"
+#include "../tiny-cuda-nn/src/object.cu"
+
 #include "../instant-ngp/src/main.cu"
 #include "../instant-ngp/src/testbed.cu"
 #include "../instant-ngp/src/testbed_image.cu"
