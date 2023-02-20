@@ -12,7 +12,7 @@
 #include "../instant-ngp/src/camera_path.cu"
 #include "../instant-ngp/src/common.cu"
 #include "../instant-ngp/src/common_device.cu"
-#include "../instant-ngp/src/dlss.cu"
+//#include "../instant-ngp/src/dlss.cu"         // requires OpenGL which I want to avoid here
 #include "../instant-ngp/src/marching_cubes.cu"
 #include "../instant-ngp/src/nerf_loader.cu"
 #include "../instant-ngp/src/openxr_hmd.cu"
