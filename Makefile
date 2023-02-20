@@ -4,15 +4,17 @@ IDIRS=. \
       ../instant-ngp/dependencies \
       ../instant-ngp/dependencies/filesystem \
       ../instant-ngp/dependencies/nanovdb \
+      ../instant-ngp/dependencies/NaturalSort \
       ../tiny-cuda-nn/include \
       ../tiny-cuda-nn/dependencies \
       ../tinylogger \
       ../eigen \
       ../zstr/src \
+      ../tinyexr/deps/miniz \
 
 INCLUDES=$(patsubst %,-I%, $(IDIRS))
 LIBS=-lz -lpthread 
-FLAGS=-std=c++17 -O3 -Werror -Wextra -Wstrict-aliasing -pedantic -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wmissing-include-dirs  -Woverloaded-virtual -Wredundant-decls -Wsign-promo -Wstrict-overflow=5 -Wswitch-default -Wundef -g -DTCNN_MIN_GPU_ARCH=90 -D__CUDA_EMULATION__ -DNGP_VERSION=\"1.0\" -D__CUDACC_VER_MAJOR__=11 -D__CUDACC_VER_MINOR__=0 $(INCLUDES) $(LIBS)
+FLAGS=-std=c++17 -O3 -Werror -Wextra -Wstrict-aliasing -pedantic -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wmissing-include-dirs  -Woverloaded-virtual -Wredundant-decls -Wsign-promo -Wstrict-overflow=5 -Wswitch-default -Wundef -g -DTCNN_MIN_GPU_ARCH=90 -D__CUDA_EMULATION__ -DNGP_VERSION=\"1.0\" -D__CUDACC_VER_MAJOR__=11 -D__CUDACC_VER_MINOR__=0 -DMINIZ_NO_ZLIB_COMPATIBLE_NAMES $(INCLUDES) $(LIBS)
 
 OS=$(shell uname)
 ifeq ($(OS), Darwin)

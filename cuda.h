@@ -254,6 +254,42 @@ using cudaArray_t = __cudaArray *;
 struct __cudaEvent;
 using cudaEvent_t = __cudaEvent *;
 
+using cudaArrayKind = uint32_t;
+const cudaArrayKind cudaArraySurfaceLoadStore = 0x02;
+
+using enumcudaChannelFormatKind = uint32_t;
+
+typedef struct
+{
+    enumcudaChannelFormatKind 	f;
+    int                         w;
+    int                         x;
+    int                         y;
+    int                         z;
+} cudaChannelFormatDesc;
+
+
+using enumcudaResourceType = uint32_t;
+const enumcudaResourceType cudaResourceTypeArray = 0x00;
+
+struct cudaResourceDesc
+{
+    cudaArray_t                 array;
+    cudaChannelFormatDesc 	desc;
+    void *                      devPtr;
+    size_t                      height;
+//  cudaMipmappedArray_t        mipmap;
+    size_t                      pitchInBytes;
+    enumcudaResourceType        resType;
+    size_t                      sizeInBytes;
+    size_t                      width;
+    struct {
+        struct {
+            cudaArray_t         array;
+        }                       array;
+    }                           res;
+};
+
 static const char * cudaGetErrorString(cudaError_t error)
 {
     (void)error;
@@ -347,6 +383,32 @@ static cudaError_t cudaGraphExecDestroy(cudaGraphExec_t exec)
     return cudaErrorNotYetImplemented;
 }
 
+static cudaError_t cudaCreateSurfaceObject(cudaSurfaceObject_t* pSurface, const cudaResourceDesc* pResDesc)
+{
+    (void)pSurface;
+    (void)pResDesc;
+    return cudaErrorNotYetImplemented;
+}
+
+static cudaError_t cudaDestroySurfaceObject(cudaSurfaceObject_t surface)
+{
+    (void)surface;
+    return cudaErrorNotYetImplemented;
+}
+
+static cudaError_t cudaFreeArray(cudaArray_t array)
+{
+    (void)array;
+    return cudaErrorNotYetImplemented;
+}
+
+template<typename T>
+static cudaChannelFormatDesc cudaCreateChannelDesc(void)
+{
+    cudaChannelFormatDesc desc;
+    return desc;
+}
+
 static cudaError_t cudaMalloc(uint8_t** devPtr, size_t size)
 {
     *devPtr = (uint8_t*)malloc(size);
@@ -357,6 +419,16 @@ static cudaError_t cudaMallocManaged(uint8_t** devPtr, size_t size, unsigned int
 {
     (void)flags;
     return cudaMalloc(devPtr, size);
+}
+
+static cudaError_t cudaMallocArray(cudaArray_t* pArray, const cudaChannelFormatDesc* pDesc, size_t x, size_t y, cudaArrayKind kind)
+{
+    (void)pArray;
+    (void)pDesc;
+    (void)x;
+    (void)y;
+    (void)kind;
+    return cudaErrorNotYetImplemented;
 }
 
 static cudaError_t cudaFree(void* devPtr)

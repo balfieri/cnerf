@@ -15,8 +15,8 @@
 //#include "../instant-ngp/src/dlss.cu"         // requires OpenGL which I want to avoid here
 #include "../instant-ngp/src/marching_cubes.cu"
 #include "../instant-ngp/src/nerf_loader.cu"
-#include "../instant-ngp/src/openxr_hmd.cu"
+//#include "../instant-ngp/src/openxr_hmd.cu"   // requires OpenGL which I want to avoid here
 #include "../instant-ngp/src/render_buffer.cu"
 #include "../instant-ngp/src/tinyexr_wrapper.cu"
-#include "../instant-ngp/src/tinyobj_loader_wrapper.cu"
+#include "../instant-ngp/src/tinyobj_loader_wrapper.cpp"
 #include "../instant-ngp/src/triangle_bvh.cu"
