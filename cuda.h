@@ -305,6 +305,9 @@ struct cudaResourceDesc
     }                           res;
 };
 
+using cudaFuncAttribute = uint32_t;
+const cudaFuncAttribute cudaFuncAttributeMaxDynamicSharedMemorySize = 8;
+
 static const char * cudaGetErrorString(cudaError_t error)
 {
     (void)error;
@@ -662,6 +665,15 @@ static cudaError_t surf2Dwrite(float2 pixel, cudaSurfaceObject_t surface, uint32
 static cudaError_t surf2Dwrite(float pixel, cudaSurfaceObject_t surface, uint32_t x, uint32_t y)
 {
     return surf2Dwrite(make_float4(pixel, pixel, pixel, pixel), surface, x, y);
+}
+
+template<class T>
+static cudaError_t cudaFuncSetAttribute( T* entry, cudaFuncAttribute attr, int value)
+{
+    (void)entry;
+    (void)attr;
+    (void)value;
+    return cudaErrorNotYetImplemented;
 }
 
 static float normcdff(float a)
