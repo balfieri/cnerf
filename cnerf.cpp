@@ -9,6 +9,8 @@
 #include "../tiny-cuda-nn/src/loss.cu"
 #include "../tiny-cuda-nn/src/network.cu"
 #include "../tiny-cuda-nn/src/object.cu"
+#include "../tiny-cuda-nn/src/optimizer.cu"
+#include "../tiny-cuda-nn/src/reduce_sum.cu"
 
 #include "../instant-ngp/src/main.cu"
 #include "../instant-ngp/src/testbed.cu"
@@ -24,6 +26,7 @@
 #include "../instant-ngp/src/nerf_loader.cu"
 //#include "../instant-ngp/src/openxr_hmd.cu"   // requires OpenGL which I want to avoid here
 #include "../instant-ngp/src/render_buffer.cu"
+#include "../instant-ngp/src/thread_pool.cpp"
 #include "../instant-ngp/src/tinyexr_wrapper.cu"
 #include "../instant-ngp/src/tinyobj_loader_wrapper.cpp"
 #include "../instant-ngp/src/triangle_bvh.cu"
