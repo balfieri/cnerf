@@ -728,6 +728,16 @@ static float __saturatef(float a)
     return a;
 }
 
+static float __sinf(float a)
+{
+    return sinf(a);
+}
+
+static float __cosf(float a)
+{
+    return sinf(a);
+}
+
 static int min(int a, int b)
 {
     return (a <= b) ? a : b;
@@ -798,13 +808,24 @@ static float atomicMax(float *ptr, float val)
     return r;
 }
 
+static float __shfl_sync(unsigned mask, const float var, int srcLane, const int width=warpSize)
+{
+    (void)mask;
+    (void)var;
+    (void)srcLane;
+    (void)width;
+    throw std::runtime_error{"__shfl_sync not yet implemented"};
+    return 0.0f;
+}
+
 static float __shfl_xor_sync(unsigned mask, const float var, const float delta, const int width=warpSize)
 {
     (void)mask;
     (void)var;
     (void)delta;
     (void)width;
-    return cudaErrorNotYetImplemented;
+    throw std::runtime_error{"__shfl_xor_sync not yet implemented"};
+    return 0.0f;
 }
 
 #endif

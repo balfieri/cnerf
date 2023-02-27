@@ -3,8 +3,11 @@
 // Initially, this will do only rendering (forward pass through neural net).
 //
 
+#include "../tinyexr/deps/miniz/miniz.c"
+
 #include "../tiny-cuda-nn/src/common.cu"
 #include "../tiny-cuda-nn/src/common_device.cu"
+#include "../tiny-cuda-nn/src/encoding.cu"
 #include "../tiny-cuda-nn/src/fully_fused_mlp.cu"
 #include "../tiny-cuda-nn/src/loss.cu"
 #include "../tiny-cuda-nn/src/network.cu"
@@ -30,3 +33,8 @@
 #include "../instant-ngp/src/tinyexr_wrapper.cu"
 #include "../instant-ngp/src/tinyobj_loader_wrapper.cpp"
 #include "../instant-ngp/src/triangle_bvh.cu"
+
+namespace tcnn
+{
+float sdata[32] = {0};                   // not sure why we get a link error with this
+};
