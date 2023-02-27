@@ -13,5 +13,5 @@ See the IDIRS at the top of Makefile for parallel repos that must exist to get t
 
 Summary of changes that I had to make to tiny-cuda-nn and instant-ngp source files (not yet checked in as these will need to be reviewed):
 * any kernel launch goes through a LAUNCH_KERNEL[13] macro to hide the <<<...>>> business and to allow it to be emulated on a CPU.
-* I currently have a #define NO_CUTLASS that ifdefs out all Cutless calls and replaces them with aborts. I'm hoping not to have to emulate Cutless.
+* I currently have a #define NO_CUTLASS that ifdefs out all Cutlass calls and replaces them with aborts. I'm hoping not to have to emulate Cutlass.
 * a few other misc changes to keep clang happy.
