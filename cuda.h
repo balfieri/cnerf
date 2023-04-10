@@ -269,7 +269,10 @@ const CUmemAllocationGranularity_flags CU_MEM_ALLOC_GRANULARITY_RECOMMENDED = 0x
 typedef unsigned long long cudaSurfaceObject_t;
 struct __cudaArray;
 using cudaArray_t = __cudaArray *;
-struct __cudaEvent;
+struct __cudaEvent
+{
+    bool active;
+};
 using cudaEvent_t = __cudaEvent *;
 
 using cudaArrayKind = uint32_t;
@@ -374,6 +377,7 @@ static cudaError_t cudaStreamCreate(cudaStream_t* pStream)
 static cudaError_t cudaStreamDestroy(cudaStream_t stream)
 {
     stream->active = false;
+    delete stream;
     return cudaSuccess;
 }
 
@@ -619,14 +623,17 @@ static CUresult cuMemRelease(CUmemGenericAllocationHandle handle)
 
 static cudaError_t cudaEventCreate(cudaEvent_t* pEvent)
 {
-    (void)pEvent;
-    return cudaErrorNotYetImplemented;
+    cudaEvent_t event = new __cudaEvent;
+    event->active = true;
+    *pEvent = event;
+    return cudaSuccess;
 }
 
 static cudaError_t cudaEventDestroy(cudaEvent_t event)
 {
-    (void)event;
-    return cudaErrorNotYetImplemented;
+    event->active = false;
+    delete event;
+    return cudaSuccess;
 }
 
 static cudaError_t cudaStreamWaitEvent(cudaStream_t stream, cudaEvent_t event, unsigned int flags)
