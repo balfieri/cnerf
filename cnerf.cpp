@@ -36,5 +36,6 @@
 
 namespace tcnn
 {
-float sdata[32] = {0};                   // not sure why we get a link error with this
+float  sdata[32] = {0};                   // not sure why we get a link error with this
+__half shmem[1024*1024] = {0};            // ditto
 };
