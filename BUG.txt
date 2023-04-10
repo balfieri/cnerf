@@ -6,6 +6,7 @@ run line du jour:
 
 ./cnerf ../nerfdata/nerf_synthetic/lego/base.ingp
 
-tcnn::reduce_sum()
-tcnn::block_reduce()
-tcnn::warp_reduce() -- need to implement one of these specially
+Testbed::frame()
+    - thinks it has to train
+    - not rendering because m_task_queue is empty
+    - question out to Thomas
