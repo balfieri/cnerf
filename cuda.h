@@ -14,6 +14,8 @@
 #define __global__
 #define __shared__
 
+#define cdassert(expr, msg) if ( !(expr) ) { std::cout << "ERROR: " << msg << "\n"; exit(1); }
+
 class dim3
 {
 public:
@@ -376,6 +378,7 @@ static cudaError_t cudaStreamCreate(cudaStream_t* pStream)
 
 static cudaError_t cudaStreamDestroy(cudaStream_t stream)
 {
+    cdassert(stream->active, "destroying inactive stream");
     stream->active = false;
     delete stream;
     return cudaSuccess;
@@ -631,6 +634,7 @@ static cudaError_t cudaEventCreate(cudaEvent_t* pEvent)
 
 static cudaError_t cudaEventDestroy(cudaEvent_t event)
 {
+    cdassert(event->active, "destroying inactive event");
     event->active = false;
     delete event;
     return cudaSuccess;
