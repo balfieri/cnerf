@@ -830,7 +830,7 @@ static float __shfl_sync(unsigned mask, const float var, int srcLane, const int 
     (void)var;
     (void)srcLane;
     (void)width;
-    throw std::runtime_error{"__shfl_sync not yet implemented"};
+    cdassert(false, "__shfl_sync not yet implemented");
     return 0.0f;
 }
 
@@ -840,7 +840,7 @@ static float __shfl_xor_sync(unsigned mask, const float var, const float delta, 
     (void)var;
     (void)delta;
     (void)width;
-    throw std::runtime_error{"__shfl_xor_sync not yet implemented"};
+    cdassert(false, "__shfl_xor_sync not yet implemented");
     return 0.0f;
 }
 

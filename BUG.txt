@@ -5,3 +5,7 @@ asking Thomas where we can find render() that run.py calls.
 run line du jour:
 
 ./cnerf ../nerfdata/nerf_synthetic/lego/base.ingp
+
+tcnn::reduce_sum()
+tcnn::block_reduce()
+tcnn::warp_reduce() -- need to implement one of these specially
