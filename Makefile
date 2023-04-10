@@ -36,7 +36,7 @@ endif
 endif
 
 #DEPS=Makefile $(patsubst %, %/*.h, $IDIRS)
-DEPS=Makefile
+DEPS=Makefile *.h
 
 cnerf: cnerf.cpp ${DEPS}
 	$(GPP) $(FLAGS) $(EXTRA_CFLAGS) -o cnerf cnerf.cpp $(LIBS)

@@ -160,7 +160,10 @@ using cudaError_t = uint32_t;
 const cudaError_t cudaSuccess = 0;
 const cudaError_t cudaErrorNotYetImplemented = 31;
 
-struct __cudaStream;
+struct __cudaStream
+{
+    bool     active;
+};
 using cudaStream_t = __cudaStream *;
 const cudaStream_t cudaStreamLegacy = nullptr;
 
@@ -362,14 +365,16 @@ static cudaError_t cuDeviceGetAttribute(int* pi, CUdevice_attribute attrib, CUde
 
 static cudaError_t cudaStreamCreate(cudaStream_t* pStream)
 {
-    (void)pStream;
-    return cudaErrorNotYetImplemented;
+    cudaStream_t stream = new __cudaStream;
+    stream->active = true;
+    *pStream = stream;
+    return cudaSuccess;
 }
 
 static cudaError_t cudaStreamDestroy(cudaStream_t stream)
 {
-    (void)stream;
-    return cudaErrorNotYetImplemented;
+    stream->active = false;
+    return cudaSuccess;
 }
 
 static cudaError_t cudaStreamSynchronize(cudaStream_t stream)
