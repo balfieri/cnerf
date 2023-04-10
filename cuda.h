@@ -355,7 +355,7 @@ static cudaError_t cudaDeviceSynchronize(void)
 static cudaError_t cudaGetDeviceProperties(cudaDeviceProp* pProp, int device)
 {
     sprintf(pProp->name, "emulated_cuda%d", device);
-    pProp->major = 1;
+    pProp->major = 9;
     pProp->minor = 0;
     return cudaSuccess;
 }

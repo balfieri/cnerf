@@ -1,3 +1,7 @@
-see make.out
-need to stub out cutlass/cutlass.h next - not even clear this is called in practice
-maybe for now we can just ifdef out the calls
+cutlass/cutlass.h is stubbed out for now - means we can't train
+
+asking Thomas where we can find render() that run.py calls.
+
+run line du jour:
+
+./cnerf ../nerfdata/nerf_synthetic/lego/base.ingp
