@@ -551,6 +551,19 @@ static cudaError_t cudaMemcpyPeerAsync(void* dst, int dstDevice, const void* src
     return cudaMemcpyAsync(dst, src, count, cudaMemcpyDeviceToDevice, stream);
 }
 
+static cudaError_t cudaMemcpy2DFromArray(void * dst, size_t dpitch, const cudaArray_t src, size_t wOffset, size_t hOffset, size_t width, size_t height, cudaMemcpyKind kind )
+{
+    (void)dst;
+    (void)dpitch;
+    (void)src;
+    (void)wOffset;
+    (void)hOffset;
+    (void)width;
+    (void)height;
+    (void)kind;
+    return CUDA_ERROR_NOT_SUPPORTED;
+}
+
 static CUresult cuGetErrorName(CUresult result, const char ** pStr)
 {
     (void)result;

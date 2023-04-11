@@ -88,5 +88,14 @@ int main( int argc, const char * argv[] )
                           testbed.m_windowless_render_surface,
                           !linear );
 
+    float * buf_ptr = new float[height*width*4];
+    CUDA_CHECK_THROW( cudaMemcpy2DFromArray( buf_ptr, 
+                                             width * sizeof(float) * 4, 
+                                             testbed.m_windowless_render_surface.surface_provider().array(), 
+                                             0, 0, 
+                                             width * sizeof(float) * 4, 
+                                             height, 
+                                             cudaMemcpyDeviceToHost ) );
+
     return 0;
 }
