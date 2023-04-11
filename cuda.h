@@ -268,25 +268,6 @@ using CUmemAllocationGranularity_flags = uint32_t;
 const CUmemAllocationGranularity_flags CU_MEM_ALLOC_GRANULARITY_MINIMUM = 0x0;
 const CUmemAllocationGranularity_flags CU_MEM_ALLOC_GRANULARITY_RECOMMENDED = 0x1;
 
-using cudaArrayKind = uint32_t;
-const cudaArrayKind cudaArraySurfaceLoadStore = 0x02;
-
-typedef unsigned long long cudaSurfaceObject_t;
-struct __cudaArray
-{
-    cudaArrayKind kind;
-    int           element_size;
-    int           x;           // width
-    int           y;           // height
-    uint8_t *     devPtr;
-};
-using cudaArray_t = __cudaArray *;
-struct __cudaEvent
-{
-    bool active;
-};
-using cudaEvent_t = __cudaEvent *;
-
 using enumcudaChannelFormatKind = uint32_t;
 const enumcudaChannelFormatKind cudaChannelFormatKindSigned = 0;
 const enumcudaChannelFormatKind cudaChannelFormatKindUnsigned = 1;
@@ -303,26 +284,42 @@ typedef struct
 } cudaChannelFormatDesc;
 
 
+using cudaArrayKind = uint32_t;
+const cudaArrayKind cudaArraySurfaceLoadStore = 0x02;
+
+struct __cudaArray
+{
+    cudaArrayKind kind;
+    int           element_size;
+    int           x;           // width
+    int           y;           // height
+    uint8_t *     devPtr;
+};
+using cudaArray_t = __cudaArray *;
 using enumcudaResourceType = uint32_t;
 const enumcudaResourceType cudaResourceTypeArray = 0x00;
 
 struct cudaResourceDesc
 {
-    cudaArray_t                 array;
-    cudaChannelFormatDesc 	desc;
-    void *                      devPtr;
-    size_t                      height;
-//  cudaMipmappedArray_t        mipmap;
-    size_t                      pitchInBytes;
     enumcudaResourceType        resType;
-    size_t                      sizeInBytes;
-    size_t                      width;
     struct {
         struct {
             cudaArray_t         array;
         }                       array;
     }                           res;
 };
+
+struct __cudaSurfaceObject
+{
+    cudaResourceDesc            res_desc;
+};
+typedef __cudaSurfaceObject * cudaSurfaceObject_t;
+
+struct __cudaEvent
+{
+    bool active;
+};
+using cudaEvent_t = __cudaEvent *;
 
 using cudaFuncAttribute = uint32_t;
 const cudaFuncAttribute cudaFuncAttributeMaxDynamicSharedMemorySize = 8;
@@ -462,9 +459,10 @@ static cudaError_t cudaGraphExecDestroy(cudaGraphExec_t exec)
 
 static cudaError_t cudaCreateSurfaceObject(cudaSurfaceObject_t* pSurface, const cudaResourceDesc* pResDesc)
 {
-    (void)pSurface;
-    (void)pResDesc;
-    return cudaErrorNotYetImplemented;
+    cudaSurfaceObject_t surface = new __cudaSurfaceObject;
+    *pSurface = surface;
+    surface->res_desc = *pResDesc;
+    return cudaSuccess;
 }
 
 static cudaError_t cudaDestroySurfaceObject(cudaSurfaceObject_t surface)
