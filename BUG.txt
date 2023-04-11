@@ -4,9 +4,6 @@ asking Thomas where we can find render() that run.py calls.
 
 run line du jour:
 
-./cnerf ../nerfdata/nerf_synthetic/lego/base.ingp
+./cnerf -scene ../nerfdata/nerf_synthetic/lego/base -w 128 -h 64
 
-Testbed::frame()
-    - thinks it has to train
-    - not rendering because m_task_queue is empty
-    - question out to Thomas
+- mma.h fill_fragment() and others need to be implemented

@@ -738,10 +738,11 @@ static cudaError_t surf2Dwrite(float pixel, cudaSurfaceObject_t surface, uint32_
 template<class T>
 static cudaError_t cudaFuncSetAttribute( T* entry, cudaFuncAttribute attr, int value)
 {
+    // nop this
     (void)entry;
     (void)attr;
     (void)value;
-    return cudaErrorNotYetImplemented;
+    return cudaSuccess;
 }
 
 static float normcdff(float a)
