@@ -370,10 +370,12 @@ static cudaError_t cudaGetDeviceProperties(cudaDeviceProp* pProp, int device)
 
 static cudaError_t cuDeviceGetAttribute(int* pi, CUdevice_attribute attrib, CUdevice dev)
 {
-    (void)pi;
-    (void)attrib;
     (void)dev;
-    return cudaErrorNotYetImplemented;
+    switch( attrib )
+    {
+        case CU_DEVICE_ATTRIBUTE_VIRTUAL_ADDRESS_MANAGEMENT_SUPPORTED:  *pi = 1; return cudaSuccess;
+        default:                                                                 return cudaErrorNotYetImplemented;
+    }
 }
 
 static cudaError_t cudaStreamCreate(cudaStream_t* pStream)
@@ -508,9 +510,10 @@ static cudaChannelFormatDesc cudaCreateChannelDesc(void)
 
 static cudaError_t cudaMemGetInfo(size_t* pFree, size_t* pTotal)
 {
-    (void)pFree;
-    (void)pTotal;
-    return cudaErrorNotYetImplemented;
+    // let's lie and say we have 4GB memory total
+    *pTotal = 4ull << 30;
+    *pFree  = *pTotal;
+    return cudaSuccess;
 }
 
 static cudaError_t cudaMalloc(uint8_t** devPtr, size_t size)
@@ -613,31 +616,32 @@ static CUresult cuMemGetAllocationGranularity (size_t* granularity, const CUmemA
 
 static CUresult cuMemAddressReserve(CUdeviceptr* ptr, size_t size, size_t alignment, CUdeviceptr addr, unsigned long long flags)
 {
-    (void)ptr;
-    (void)size;
     (void)alignment;
-    (void)addr;
-    (void)flags;
-    return CUDA_ERROR_NOT_SUPPORTED;            // use mmap() if needed
+    cdassert( addr == 0, "cuMemAddressReserve expects addr==0" );
+    cdassert( flags == 0, "cuMemAddressReserve expects flags==0" );
+    cudaMalloc( ptr, size );
+    return CUDA_SUCCESS;
 }
 
 static CUresult cuMemCreate(CUmemGenericAllocationHandle* handle, size_t size, const CUmemAllocationProp* prop, unsigned long long flags)
 {
-    (void)handle;
+    // let's NOP this physical memory alloc
+    *handle = 0;
     (void)size;
     (void)prop;
     (void)flags;
-    return CUDA_ERROR_NOT_SUPPORTED;            // use mmap() if needed
+    return CUDA_SUCCESS;
 }
 
 static CUresult cuMemMap (CUdeviceptr ptr, size_t size, size_t offset, CUmemGenericAllocationHandle handle, unsigned long long flags)
 {
+    // let's NOP this
     (void)ptr;
     (void)size;
     (void)offset;
     (void)handle;
     (void)flags;
-    return CUDA_ERROR_NOT_SUPPORTED;            // use mmap() if needed
+    return CUDA_SUCCESS;
 }
 
 static CUresult cuMemAddressFree(CUdeviceptr ptr, size_t size)
@@ -649,11 +653,12 @@ static CUresult cuMemAddressFree(CUdeviceptr ptr, size_t size)
 
 static CUresult cuMemSetAccess( CUdeviceptr ptr, size_t size, const CUmemAccessDesc* desc, size_t count)
 {
+    // let's NOP this
     (void)ptr;
     (void)size;
     (void)desc;
     (void)count;
-    return CUDA_ERROR_NOT_SUPPORTED;           
+    return CUDA_SUCCESS;
 }
 
 static CUresult cuMemUnmap(CUdeviceptr ptr, size_t size)
