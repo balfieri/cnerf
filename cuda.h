@@ -268,17 +268,24 @@ using CUmemAllocationGranularity_flags = uint32_t;
 const CUmemAllocationGranularity_flags CU_MEM_ALLOC_GRANULARITY_MINIMUM = 0x0;
 const CUmemAllocationGranularity_flags CU_MEM_ALLOC_GRANULARITY_RECOMMENDED = 0x1;
 
+using cudaArrayKind = uint32_t;
+const cudaArrayKind cudaArraySurfaceLoadStore = 0x02;
+
 typedef unsigned long long cudaSurfaceObject_t;
-struct __cudaArray;
+struct __cudaArray
+{
+    cudaArrayKind kind;
+    int           element_size;
+    int           x;           // width
+    int           y;           // height
+    uint8_t *     devPtr;
+};
 using cudaArray_t = __cudaArray *;
 struct __cudaEvent
 {
     bool active;
 };
 using cudaEvent_t = __cudaEvent *;
-
-using cudaArrayKind = uint32_t;
-const cudaArrayKind cudaArraySurfaceLoadStore = 0x02;
 
 using enumcudaChannelFormatKind = uint32_t;
 const enumcudaChannelFormatKind cudaChannelFormatKindSigned = 0;
@@ -522,12 +529,13 @@ static cudaError_t cudaMallocManaged(uint8_t** devPtr, size_t size, unsigned int
 
 static cudaError_t cudaMallocArray(cudaArray_t* pArray, const cudaChannelFormatDesc* pDesc, size_t x, size_t y, cudaArrayKind kind)
 {
-    (void)pArray;
-    (void)pDesc;
-    (void)x;
-    (void)y;
-    (void)kind;
-    return cudaErrorNotYetImplemented;
+    cudaArray_t array = new __cudaArray;
+    *pArray = array;
+    array->kind = kind;
+    array->x = x;
+    array->y = y;
+    array->element_size = (pDesc->x + pDesc->y + pDesc->z + pDesc->w) / 8;
+    return cudaMalloc(&array->devPtr, array->element_size*x*y );
 }
 
 static cudaError_t cudaFree(void* devPtr)
