@@ -50,11 +50,17 @@ void die( std::string msg )
 int main( int argc, const char * argv[] )
 {
     std::string scene = "";
+    int      width  = 1920;
+    int      height = 1080;
+    bool     linear = true;
 
     for( int i = 1; i < argc; i++ )
     {
         std::string arg = argv[i];
         if        ( arg == "-scene" ) {                         scene = argv[++i];
+        } else if ( arg == "-w" ) {                             width = std::atoi( argv[++i] );
+        } else if ( arg == "-h" ) {                             height = std::atoi( argv[++i] );
+        } else if ( arg == "-linear" ) {                        linear = std::atoi( argv[++i] );
         } else {                                                die( "unknown option: " + arg );
         }
     }
@@ -65,7 +71,22 @@ int main( int argc, const char * argv[] )
     ngp::Testbed testbed;
     testbed.load_file( scene_file );
     testbed.m_train = false;
-    testbed.frame();
+    testbed.m_windowless_render_surface.resize( {width, height} );
+    testbed.m_windowless_render_surface.reset_accumulation();
+    testbed.set_camera_from_time( 0.0f );
+    testbed.m_smoothed_camera = testbed.m_camera;
+    testbed.render_frame( testbed.m_stream.get(),
+                          testbed.m_smoothed_camera, // sample_start_cam_matrix,
+                          testbed.m_smoothed_camera, // sample_end_cam_matrix,
+                          testbed.m_smoothed_camera, // prev_camera_matrix,
+                          testbed.m_screen_center,
+                          testbed.m_relative_focal_length,
+                          {0.0f, 0.0f, 0.0f, 1.0f},
+                          {},
+                          {},
+                          testbed.m_visualized_dimension,
+                          testbed.m_windowless_render_surface,
+                          !linear );
 
     return 0;
 }
