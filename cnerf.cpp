@@ -15,7 +15,7 @@
 #include "../tiny-cuda-nn/src/optimizer.cu"
 #include "../tiny-cuda-nn/src/reduce_sum.cu"
 
-#include "../instant-ngp/src/main.cu"
+#include "../instant-ngp/src/main.cu"           // but main() below
 #include "../instant-ngp/src/testbed.cu"
 #include "../instant-ngp/src/testbed_image.cu"
 #include "../instant-ngp/src/testbed_nerf.cu"   
@@ -39,3 +39,33 @@ namespace tcnn
 float  sdata[32] = {0};                   // not sure why we get a link error with this
 __half shmem[1024*1024] = {0};            // ditto
 };
+
+void die( std::string msg )
+{
+    std::cout << "ERROR: " << msg << "\n";
+    exit( 1 );
+}
+#define dassert( expr, msg ) if ( !(expr) ) die( msg )
+
+int main( int argc, const char * argv[] )
+{
+    std::string scene = "";
+
+    for( int i = 1; i < argc; i++ )
+    {
+        std::string arg = argv[i];
+        if        ( arg == "-scene" ) {                         scene = argv[++i];
+        } else {                                                die( "unknown option: " + arg );
+        }
+    }
+
+    dassert( scene != "", "no -scene specified" );
+    std::string scene_file = scene + ".ingp";
+
+    ngp::Testbed testbed;
+    testbed.load_file( scene_file );
+    testbed.m_train = false;
+    testbed.frame();
+
+    return 0;
+}
