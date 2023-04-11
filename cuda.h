@@ -687,17 +687,19 @@ static cudaError_t cudaEventDestroy(cudaEvent_t event)
 
 static cudaError_t cudaStreamWaitEvent(cudaStream_t stream, cudaEvent_t event, unsigned int flags)
 {
+    // assume event is immediately available, so treat as NOP
     (void)stream;
     (void)event;
     (void)flags;
-    return cudaErrorNotYetImplemented;
+    return cudaSuccess;
 }
 
 static cudaError_t cudaEventRecord(cudaEvent_t event, cudaStream_t stream)
 {
+    // assume event is immediately available, so treat as NOP
     (void)event;
     (void)stream;
-    return cudaErrorNotYetImplemented;
+    return cudaSuccess;
 }
 
 static cudaError_t surf2Dread(float4 * pPixel, cudaSurfaceObject_t surface, uint32_t x, uint32_t y)
