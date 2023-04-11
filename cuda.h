@@ -281,6 +281,10 @@ using cudaArrayKind = uint32_t;
 const cudaArrayKind cudaArraySurfaceLoadStore = 0x02;
 
 using enumcudaChannelFormatKind = uint32_t;
+const enumcudaChannelFormatKind cudaChannelFormatKindSigned = 0;
+const enumcudaChannelFormatKind cudaChannelFormatKindUnsigned = 1;
+const enumcudaChannelFormatKind cudaChannelFormatKindFloat = 2;
+const enumcudaChannelFormatKind cudaChannelFormatKindNone = 3;
 
 typedef struct
 {
@@ -472,6 +476,28 @@ template<typename T>
 static cudaChannelFormatDesc cudaCreateChannelDesc(void)
 {
     cudaChannelFormatDesc desc;
+    desc.f = cudaChannelFormatKindFloat;
+    desc.x = 0;
+    desc.y = 0;
+    desc.z = 0;
+    desc.w = 0;
+    if ( std::is_same<T, float>::value ) {
+        desc.x = sizeof(float)*8;
+    } else if ( std::is_same<T, float2>::value ) {
+        desc.x = sizeof(float)*8;
+        desc.y = sizeof(float)*8;
+    } else if ( std::is_same<T, float3>::value ) {
+        desc.x = sizeof(float)*8;
+        desc.y = sizeof(float)*8;
+        desc.z = sizeof(float)*8;
+    } else if ( std::is_same<T, float4>::value ) {
+        desc.x = sizeof(float)*8;
+        desc.y = sizeof(float)*8;
+        desc.z = sizeof(float)*8;
+        desc.w = sizeof(float)*8;
+    } else {
+        cdassert( false, "unknown T in cudaCreateChannelDesc()" );
+    }
     return desc;
 }
 
