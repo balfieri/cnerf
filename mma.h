@@ -102,11 +102,28 @@ void load_matrix_sync( fragment<Use, m, n, k, T, Layout> &a, const T* mptr, unsi
 template<typename Use, int m, int n, int k, typename T, typename Layout=void>
 void store_matrix_sync(T* mptr, const fragment<Use, m, n, k, T, Layout> &a, unsigned ldm, layout_t layout)
 {
-     (void)mptr;
-     (void)a;
-     (void)ldm;    
-     (void)layout;
-     throw std::runtime_error{"store_matrix_sync not yet implemented"};
+    mdassert( ldm >= n, "load_matrix_sync: ldm (stride) too small" );
+    bool is_row_major = layout == mem_row_major;
+    const T * fptr = a.x;
+    if ( is_row_major ) {
+        for( uint32_t i = 0; i < m; i++ )
+        {
+            for( uint32_t j = 0; j < n; j++, fptr++, mptr++ )
+            {
+                *mptr = *fptr;
+            }
+
+            mptr += ldm - n;  // skip to beginning of next row
+        }
+    } else {
+        for( uint32_t i = 0; i < m; i++ )
+        {
+            for( uint32_t j = 0; j < n; j++, fptr++ )
+            {
+                mptr[j*ldm + i] = *fptr;
+            }
+        }
+    }
 }
 
 // perform d = a*b + c (typically d == c)
