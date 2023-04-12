@@ -49,17 +49,8 @@ public:
     T *    x;                   // note: for my sanity, always stored here in row-major regardless of Layout
 };
 
-template<typename Use, int m, int n, int k, typename Layout=void>
-void fill_fragment( fragment<Use, m, n, k, float, Layout> &a, const float& v )
-{
-    for( size_t i = 0; i < a.num_elements; i++ )
-    {
-        a.x[i] = v;
-    }
-}
-
-template<typename Use, int m, int n, int k, typename Layout=void>
-void fill_fragment( fragment<Use, m, n, k, __half, Layout> &a, const __half& v )
+template<typename Use, int m, int n, int k, typename T, typename Layout=void>
+void fill_fragment( fragment<Use, m, n, k, T, Layout> &a, const float& v )
 {
     for( size_t i = 0; i < a.num_elements; i++ )
     {
@@ -127,6 +118,7 @@ void store_matrix_sync(T* mptr, const fragment<Use, m, n, k, T, Layout> &a, unsi
 }
 
 // perform d = a*b + c (typically d == c)
+// remember that fragments are always stored row-major in this cheesy implementation, so ignore Layout_*.
 //
 template<int m, int n, int k, typename T, typename Layout_d=void, typename Layout_a=void, typename Layout_b=void, typename Layout_c=void>
 void mma_sync(      fragment<accumulator, m, n, k, T, Layout_d> &d, 
@@ -135,12 +127,18 @@ void mma_sync(      fragment<accumulator, m, n, k, T, Layout_d> &d,
               const fragment<accumulator, m, n, k, T, Layout_c> &c,
               bool  satf=false)
 {
-    (void)d;
-    (void)a;
-    (void)b;
-    (void)c;
-    (void)satf;
-    throw std::runtime_error{"mma_sync not yet implemented"};
+    for( uint32_t mi = 0; mi < m; mi++ )
+    {
+        for( uint32_t ni = 0; ni < n; ni++ )
+        {
+            T sum = c.x[mi*n+ni];
+            for( uint32_t ki = 0; ki < k; ki++ )
+            {
+                sum += a.x[mi*k+ki] * b.x[ki*n+ni];
+            }
+            d.x[mi*n+ni] = sum;
+        }
+    }
 }
 
 }; // wmma
