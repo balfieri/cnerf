@@ -6,4 +6,24 @@ run line du jour:
 
 ./cnerf -scene ../nerfdata/nerf_synthetic/lego/base -w 128 -h 64
 
-- mma.h fill_fragment() and others need to be implemented
+cudaMemcpy2DFromArray() needs to be implemented.
+
+going very slowly
+
+-w 32 -h 16 with -O3 is pretty fast
+
+this is the typical callback when it's chugging away a long time
+
+mma_sync
+threadblock_input_layer_forward_dynamic
+kernel_mlp_fused
+mlp_fused_forward
+inference_mixed_precision_impl
+inference_mixed_precision
+NerfTracer::inference_mixed_precision_impl
+NerfTracer::inference_mixed_precision
+trace
+render_nerf
+render_frame_main
+render_frame
+main
