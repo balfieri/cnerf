@@ -47,12 +47,27 @@ void die( std::string msg )
 }
 #define dassert( expr, msg ) if ( !(expr) ) die( msg )
 
+void write_png( float * buf_ptr, int nx, int ny, int nchan, const char * name )
+{
+    unsigned char * cdata = new unsigned char[nx*ny*nchan];
+    for( int i = 0; i < nx*ny*nchan; i++ )
+    {
+        float v = buf_ptr[i];
+        if ( v < 0.0 ) v = 0.0;
+        if ( v > 1.0 ) v = 1.0;
+        cdata[i] = v*255.99;
+    }
+    stbi_write_png( name, nx, ny, nchan, cdata, 0 );
+    delete[] cdata;
+}
+
 int main( int argc, const char * argv[] )
 {
     std::string scene = "";
     int      width  = 1920;
     int      height = 1080;
     bool     linear = true;
+    const char * outfile = "output.png";
 
     for( int i = 1; i < argc; i++ )
     {
@@ -61,6 +76,7 @@ int main( int argc, const char * argv[] )
         } else if ( arg == "-w" ) {                             width = std::atoi( argv[++i] );
         } else if ( arg == "-h" ) {                             height = std::atoi( argv[++i] );
         } else if ( arg == "-linear" ) {                        linear = std::atoi( argv[++i] );
+        } else if ( arg == "-outfile" ) {                       outfile = argv[++i]; 
         } else {                                                die( "unknown option: " + arg );
         }
     }
@@ -96,6 +112,8 @@ int main( int argc, const char * argv[] )
                                              width * sizeof(float) * 4, 
                                              height, 
                                              cudaMemcpyDeviceToHost ) );
+    write_png( buf_ptr, width, height, 4, outfile );
+    std::cout << "Wrote " << outfile << "\n";
 
     return 0;
 }
