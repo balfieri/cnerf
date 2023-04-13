@@ -1,5 +1,6 @@
 Need to sanity-check image with Thomas.
 Will likely need to build CUDA and add printfs to it.
+Probably want to use multiple threads when running CUDA kernels.
 
 run lines du jour:
 
