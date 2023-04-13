@@ -1,18 +1,14 @@
-cutlass/cutlass.h is stubbed out for now - means we can't train
+write out .png
 
-asking Thomas where we can find render() that run.py calls.
+run lines du jour:
 
-run line du jour:
+./cnerf -scene ../nerfdata/nerf_synthetic/lego/base -w 128 -h 64        - takes 4.5m to run with -O3
+./cnerf -scene ../nerfdata/nerf_synthetic/lego/base -w 32  -h 16        - takes 22s
+./cnerf -scene ../nerfdata/nerf_synthetic/lego/base -w 8   -h 4
 
-./cnerf -scene ../nerfdata/nerf_synthetic/lego/base -w 128 -h 64
+----------------------------------------------
 
-cudaMemcpy2DFromArray() needs to be implemented.
-
-going very slowly
-
--w 32 -h 16 with -O3 is pretty fast
-
-this is the typical callback when it's chugging away a long time
+this is the typical callback when it's chugging away a long time:
 
 mma_sync
 threadblock_input_layer_forward_dynamic
@@ -27,3 +23,7 @@ render_nerf
 render_frame_main
 render_frame
 main
+
+----------------------------------------------
+
+note: cutlass/cutlass.h is stubbed out for now - means we can't train
