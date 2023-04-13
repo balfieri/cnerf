@@ -586,17 +586,21 @@ static cudaError_t cudaMemcpyPeerAsync(void* dst, int dstDevice, const void* src
     return cudaMemcpyAsync(dst, src, count, cudaMemcpyDeviceToDevice, stream);
 }
 
+// dpitch is byte width of dst (each row)
+// [wOffset, hOffset] is upper-left corner in src from which to start copying (usually [0,0].
+// src has height rows of width bytes each
+// 
 static cudaError_t cudaMemcpy2DFromArray(void * dst, size_t dpitch, const cudaArray_t src, size_t wOffset, size_t hOffset, size_t width, size_t height, cudaMemcpyKind kind )
 {
-    (void)dst;
-    (void)dpitch;
-    (void)src;
-    (void)wOffset;
-    (void)hOffset;
-    (void)width;
-    (void)height;
-    (void)kind;
-    return CUDA_ERROR_NOT_SUPPORTED;
+    const uint8_t * sptr = src->devPtr + hOffset*width + wOffset;
+          uint8_t * dptr = (uint8_t *)dst;
+    for( uint32_t y = 0; y < height; y++ )
+    {
+        memcpy( dptr, sptr, width );
+        sptr += width;
+        dptr += dpitch;
+    }
+    return CUDA_SUCCESS;
 }
 
 static CUresult cuGetErrorName(CUresult result, const char ** pStr)
@@ -616,6 +620,7 @@ static CUresult cuMemGetAllocationGranularity (size_t* granularity, const CUmemA
 
 static CUresult cuMemAddressReserve(CUdeviceptr* ptr, size_t size, size_t alignment, CUdeviceptr addr, unsigned long long flags)
 {
+    // let's NOP this
     (void)alignment;
     cdassert( addr == 0, "cuMemAddressReserve expects addr==0" );
     cdassert( flags == 0, "cuMemAddressReserve expects flags==0" );
@@ -646,9 +651,10 @@ static CUresult cuMemMap (CUdeviceptr ptr, size_t size, size_t offset, CUmemGene
 
 static CUresult cuMemAddressFree(CUdeviceptr ptr, size_t size)
 {
+    // let's NOP this
     (void)ptr;
     (void)size;
-    return CUDA_ERROR_NOT_SUPPORTED;            // use munmap() if needed
+    return CUDA_SUCCESS;
 }
 
 static CUresult cuMemSetAccess( CUdeviceptr ptr, size_t size, const CUmemAccessDesc* desc, size_t count)
@@ -663,13 +669,15 @@ static CUresult cuMemSetAccess( CUdeviceptr ptr, size_t size, const CUmemAccessD
 
 static CUresult cuMemUnmap(CUdeviceptr ptr, size_t size)
 {
+    // let's NOP this
     (void)ptr;
     (void)size;
-    return CUDA_ERROR_NOT_SUPPORTED;            // use munmap() if needed
+    return CUDA_SUCCESS;
 }
 
 static CUresult cuMemRelease(CUmemGenericAllocationHandle handle)
 {
+    // let's NOP this
     free(handle);
     return CUDA_SUCCESS;
 }
