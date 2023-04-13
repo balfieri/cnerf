@@ -1,4 +1,5 @@
-write out .png
+Need to sanity-check image with Thomas.
+Will likely need to build CUDA and add printfs to it.
 
 run lines du jour:
 

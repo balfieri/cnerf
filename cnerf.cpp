@@ -49,15 +49,22 @@ void die( std::string msg )
 
 void write_png( float * buf_ptr, int nx, int ny, int nchan, const char * name )
 {
-    unsigned char * cdata = new unsigned char[nx*ny*nchan];
-    for( int i = 0; i < nx*ny*nchan; i++ )
+    unsigned char * cdata = new unsigned char[ny*nx*3];
+    for( int yi = 0; yi < ny; yi++ )
     {
-        float v = buf_ptr[i];
-        if ( v < 0.0 ) v = 0.0;
-        if ( v > 1.0 ) v = 1.0;
-        cdata[i] = v*255.99;
+        for( int xi = 0; xi < nx; xi++ )
+        {
+            for( int c = 0; c < 3; c++ )
+            {
+                float v = buf_ptr[c];
+                if ( v < 0.0 ) v = 0.0;
+                if ( v > 1.0 ) v = 1.0;
+                cdata[yi*nx*3] = v*255.99;
+            }
+            buf_ptr += nchan;
+        }
     }
-    stbi_write_png( name, nx, ny, nchan, cdata, 0 );
+    stbi_write_png( name, nx, ny, 3, cdata, 0 );
     delete[] cdata;
 }
 
