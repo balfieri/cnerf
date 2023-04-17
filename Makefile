@@ -1,3 +1,4 @@
+PROG=cnerf
 IDIRS=. \
       ../ \
       ../instant-ngp/include \
@@ -36,10 +37,10 @@ endif
 endif
 
 #DEPS=Makefile $(patsubst %, %/*.h, $IDIRS)
-DEPS=Makefile *.h
+DEPS=Makefile $(PROG).cpp *.h
 
-cnerf: cnerf.cpp ${DEPS}
-	$(GPP) $(FLAGS) $(EXTRA_CFLAGS) -o cnerf cnerf.cpp $(LIBS)
+$(PROG): $(PROG).cpp $(DEPS)
+	$(GPP) $(FLAGS) $(EXTRA_CFLAGS) -o $(PROG) $(PROG).cpp $(LIBS)
 
 clean:
-	rm -fr render *.o *.dSYM
+	rm -fr $(PROG) *.o *.dSYM
