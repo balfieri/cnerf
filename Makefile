@@ -37,7 +37,7 @@ endif
 endif
 
 #DEPS=Makefile $(patsubst %, %/*.h, $IDIRS)
-DEPS=Makefile $(PROG).cpp *.h
+DEPS=Makefile *.h
 
 $(PROG): $(PROG).cpp $(DEPS)
 	$(GPP) $(FLAGS) $(EXTRA_CFLAGS) -o $(PROG) $(PROG).cpp $(LIBS)
