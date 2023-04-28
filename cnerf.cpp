@@ -3,6 +3,8 @@
 // Initially, this will do only rendering (forward pass through neural net).
 //
 
+#include "bdebug.h"                             // my debug functions
+
 #include "../tinyexr/deps/miniz/miniz.c"
 
 #include "../tiny-cuda-nn/src/common.cu"
