@@ -158,6 +158,12 @@ public:
     int w;
 };
 
+inline std::ostream& operator << ( std::ostream& os, const int4& v ) 
+{
+    os << "[" << v.x << "," << v.y << "," << v.z << "," << v.w << "]";
+    return os;
+}
+
 using cudaError_t = uint32_t;
 const cudaError_t cudaSuccess = 0;
 const cudaError_t cudaErrorNotYetImplemented = 31;

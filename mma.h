@@ -49,6 +49,27 @@ public:
     T *    x;                   // note: for my sanity, always stored here in row-major regardless of Layout
 };
 
+template<typename Use, int m, int n, int k, typename T, typename Layout=void> 
+inline std::ostream& operator << ( std::ostream& os, const fragment<Use, m, n, k, T, Layout>& frag ) 
+{
+    os << "[ ";
+    size_t i = 0;
+    for( int mi = 0; mi < m; mi++ )
+    {
+        if ( mi != 0 ) os << ", ";
+        os << "[";
+        for( int ni = 0; ni < n; ni++, i++ )
+        {
+            if ( ni != 0 ) os << ",";
+            os << float(frag.x[i]);
+        }
+        os << "]";
+    }
+    os << " ]"; 
+    return os;
+}
+
+
 template<typename Use, int m, int n, int k, typename T, typename Layout=void>
 void fill_fragment( fragment<Use, m, n, k, T, Layout> &a, const float& v )
 {
