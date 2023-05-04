@@ -64,6 +64,24 @@ static dim3 gridDim;
     }\
 }\
 
+#define LAUNCH_KERNEL3_BLOCK_LEVEL(kernel, gridDim3, blockDim3, shmem_size, stream, args)\
+{\
+    gridDim  = gridDim3;\
+    blockDim = blockDim3;\
+    for(uint32_t z = 0; z < gridDim.z; z++)\
+    {\
+        blockIdx.z = z;\
+        for(uint32_t y = 0; y < gridDim.y; y++)\
+        {\
+            blockIdx.y = y;\
+            for(uint32_t x = 0; x < gridDim.x; x++)\
+            {\
+                kernel args;\
+            }\
+        }\
+    }\
+}\
+
 static inline void __syncthreads(void) 
 {
 }
