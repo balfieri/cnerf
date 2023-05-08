@@ -76,6 +76,7 @@ static dim3 gridDim;
             blockIdx.y = y;\
             for(uint32_t x = 0; x < gridDim.x; x++)\
             {\
+                blockIdx.x = x;\
                 kernel args;\
             }\
         }\
