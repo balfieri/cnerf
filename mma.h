@@ -52,20 +52,7 @@ public:
 template<typename Use, int m, int n, int k, typename T, typename Layout=void> 
 inline std::ostream& operator << ( std::ostream& os, const fragment<Use, m, n, k, T, Layout>& frag ) 
 {
-    os << "[ ";
-    size_t i = 0;
-    for( int mi = 0; mi < m; mi++ )
-    {
-        if ( mi != 0 ) os << ", ";
-        os << "[";
-        for( int ni = 0; ni < n; ni++, i++ )
-        {
-            if ( ni != 0 ) os << ",";
-            os << float(frag.x[i]);
-        }
-        os << "]";
-    }
-    os << " ]"; 
+    matrix_print( os, frag.x, m, n, true );
     return os;
 }
 
