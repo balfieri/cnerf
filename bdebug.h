@@ -20,25 +20,24 @@ static bool __bdebug_any = false;
 template<typename T>
 inline void matrix_print( std::ostream& os, const T * data, int m, int n, bool is_row_major, bool add_newline=false ) 
 {
-    if ( is_row_major ) {
-        os << "[ ";
-        for( int mi = 0; mi < m; mi++ )
+    os << "[ ";
+    for( int mi = 0; mi < m; mi++ )
+    {
+        if ( mi != 0 ) os << ", ";
+        os << "[";
+        for( int ni = 0; ni < n; ni++ )
         {
-            if ( mi != 0 ) os << ", ";
-            os << "[";
-            for( int ni = 0; ni < n; ni++, data++ )
-            {
-                if ( ni != 0 ) os << ",";
-                os << float(*data);
+            if ( ni != 0 ) os << ", ";
+            if ( is_row_major ) {
+                os << float(data[mi*n + ni]);
+            } else {
+                os << float(data[ni*m + mi]);
             }
-            os << "]";
         }
-        os << " ]"; 
-        if ( add_newline ) os << "\n";
-    } else {
-        std::cout << "ERROR: can't print col-major at the moment\n";
-        exit( 1 );
+        os << "]";
     }
+    os << " ]"; 
+    if ( add_newline ) os << "\n";
 }
 
 template<typename T>
